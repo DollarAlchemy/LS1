@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Lucky Scratch — Arcade Lottery</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       SCANLINE OVERLAY (CRT effect)
+  ═══════════════════════════════════════════════ -->
+  <div class="scanlines"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       STATS BAR (always visible)
+  ═══════════════════════════════════════════════ -->
+  <header class="stats-bar">
+    <div class="stat-block">
+      <span class="stat-label">BANKROLL</span>
+      <span class="stat-value" id="stat-bankroll">$50.00</span>
+    </div>
+    <div class="logo-title">🎰 LUCKY SCRATCH</div>
+    <div class="stat-block right">
+      <span class="stat-label">TOTAL WON</span>
+      <span class="stat-value won" id="stat-won">$0.00</span>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN: SHOP / COUNTER
+  ═══════════════════════════════════════════════ -->
+  <main class="screen" id="screen-shop">
+
+    <!-- Counter top decoration -->
+    <div class="counter-header">
+      <div class="counter-sign">🏪 TICKET COUNTER — EST. 1994</div>
+      <div class="counter-sub">Select a scratch ticket to play</div>
+    </div>
+
+    <!-- Ticket rack -->
+    <div class="ticket-rack" id="ticket-rack">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Session stats footer -->
+    <div class="session-footer">
+      <div class="session-stat">🎟 Tickets Played: <strong id="stat-played">0</strong></div>
+      <div class="session-stat">💸 Total Spent: <strong id="stat-spent">$0.00</strong></div>
+      <div class="session-stat">🏆 Biggest Win: <strong id="stat-biggest">$0.00</strong></div>
+    </div>
+
+    <!-- First-time hint -->
+    <div class="hint-banner" id="hint-banner">
+      💡 <strong>How to Play:</strong> Pick a ticket below, buy it, then scratch away the grey coating with your mouse or finger to reveal what's underneath!
+      <button class="hint-close" onclick="document.getElementById('hint-banner').style.display='none'">✕</button>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN: SCRATCH PLAY AREA
+  ═══════════════════════════════════════════════ -->
+  <main class="screen hidden" id="screen-scratch">
+
+    <div class="scratch-header">
+      <button class="btn-back" id="btn-back">← COUNTER</button>
+      <div class="ticket-title-bar" id="scratch-ticket-title">TICKET NAME</div>
+      <div class="scratch-cost-badge" id="scratch-cost-badge">$1.00</div>
+    </div>
+
+    <!-- The ticket art + canvas scratch overlay -->
+    <div class="ticket-stage" id="ticket-stage">
+
+      <!-- Ticket background / prize grid — populated by JS per ticket type -->
+      <div class="ticket-face" id="ticket-face"></div>
+
+      <!-- Canvas sits on top; JS draws the scratch layer here -->
+      <canvas id="scratch-canvas"></canvas>
+
+    </div>
+
+    <!-- Instructions / progress -->
+    <div class="scratch-ui-row">
+      <div class="scratch-hint" id="scratch-hint">🪙 Scratch to reveal your prizes!</div>
+      <button class="btn-reveal-all" id="btn-reveal-all">REVEAL ALL</button>
+    </div>
+
+    <!-- Result overlay (hidden until scratch complete) -->
+    <div class="result-overlay hidden" id="result-overlay">
+      <div class="result-card" id="result-card">
+        <div class="result-emoji" id="result-emoji">🎉</div>
+        <div class="result-title" id="result-title">YOU WIN!</div>
+        <div class="result-amount" id="result-amount">+$5.00</div>
+        <div class="result-detail" id="result-detail"></div>
+        <button class="btn-continue" id="btn-continue">KEEP PLAYING →</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       MODAL: BUY CONFIRMATION
+  ═══════════════════════════════════════════════ -->
+  <div class="modal-backdrop hidden" id="buy-modal">
+    <div class="modal-card" id="buy-modal-card">
+      <div class="modal-ticket-preview" id="modal-preview-emoji"></div>
+      <div class="modal-ticket-name" id="modal-ticket-name">Lucky 7s</div>
+      <div class="modal-ticket-theme" id="modal-ticket-theme">Neon Casino</div>
+      <div class="modal-price-line">
+        Cost: <span class="modal-price" id="modal-price">$1.00</span>
+      </div>
+      <div class="modal-prize-table" id="modal-prize-table"></div>
+      <div class="modal-bankroll-line">Your balance: <span id="modal-balance">$50.00</span></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="btn-cancel-buy">CANCEL</button>
+        <button class="btn-buy-confirm" id="btn-confirm-buy">BUY TICKET 🎟</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MODAL: BROKE SCREEN
+  ═══════════════════════════════════════════════ -->
+  <div class="modal-backdrop hidden" id="broke-modal">
+    <div class="modal-card broke-card">
+      <div style="font-size:3rem">😬</div>
+      <div class="modal-ticket-name">Out of Cash!</div>
+      <div class="modal-ticket-theme">You've run out of money.</div>
+      <div class="modal-actions">
+        <button class="btn-buy-confirm" onclick="resetGame()">🔄 START OVER ($50)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win celebration particles container -->
+  <div class="particles-container" id="particles"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
